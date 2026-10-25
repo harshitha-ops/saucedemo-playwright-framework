@@ -19,4 +19,12 @@ test.describe('Inception42 website', () => {
     await home.goto();
     await expect(home.mainHeading).toBeVisible();
   });
+
+ test('home page shows heading and Get in Touch opens contact', { tag: '@inception' }, async ({ page }) => {
+    const home = new InceptionHomePage(page);
+    await home.goto();
+    await expect(home.mainHeading).toBeVisible();
+    await home.clickIconThenGetInTouch();
+    await home.expectContactUsVisible();
+  });
 });

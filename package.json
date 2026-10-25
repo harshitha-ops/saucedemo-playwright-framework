@@ -7,7 +7,8 @@
     "test": "playwright test",
     "test:smoke": "playwright test --grep @smoke",
     "test:regression": "playwright test --grep @regression",
-    "test:inception": "playwright test --grep @inception"
+    "test:inception": "playwright test --grep @inception",
+    "test:saucedemo:slow": "SLOWMO=1500 playwright test tests/login.spec.ts tests/inventory.spec.ts --headed --workers=1 --timeout=60000"
   },
   "keywords": [],
   "author": "",
