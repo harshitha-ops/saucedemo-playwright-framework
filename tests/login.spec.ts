@@ -1,9 +1,28 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/base';
+import { users, errors } from '../data/users';
 
-test('standard user can log in', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.getByPlaceholder('Username').fill('standard_user');
-  await page.getByPlaceholder('Password').fill('secret_sauce');
-  await page.getByRole('button', { name: 'Login' }).click();
-  await expect(page).toHaveURL(/inventory/);
+test.describe('Login', () => {
+  test.beforeEach(async ({ loginPage }) => {
+    await loginPage.goto();
+  });
+
+  test('standard user can log in', { tag: '@smoke' }, async ({ loginPage, inventoryPage }) => {
+    await loginPage.login(users.standard.username, users.standard.password);
+    await inventoryPage.expectLoaded();
+  });
+
+  test('locked out user sees an error', { tag: '@regression' }, async ({ loginPage }) => {
+    await loginPage.login(users.lockedOut.username, users.lockedOut.password);
+    await loginPage.expectError(errors.lockedOut);
+  });
+
+  test('wrong password shows an error', { tag: '@regression' }, async ({ loginPage }) => {
+    await loginPage.login(users.wrongPassword.username, users.wrongPassword.password);
+    await loginPage.expectError(errors.invalidCredentials);
+  });
+
+  test('empty username shows an error', { tag: '@regression' }, async ({ loginPage }) => {
+    await loginPage.login('', users.standard.password);
+    await loginPage.expectError(errors.usernameRequired);
+  });
 });
